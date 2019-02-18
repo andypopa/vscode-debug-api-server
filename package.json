@@ -29,10 +29,18 @@
 		"test": "npm run compile && node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
-		"typescript": "^3.3.1",
-		"vscode": "^1.1.28",
-		"tslint": "^5.12.1",
+		"@types/express": "^4.16.1",
+		"@types/mocha": "^2.2.42",
 		"@types/node": "^10.12.21",
-		"@types/mocha": "^2.2.42"
+		"@types/socket.io": "^2.1.2",
+		"@types/socket.io-client": "^1.4.32",
+		"tslint": "^5.12.1",
+		"typescript": "^3.3.1",
+		"vscode": "^1.1.28"
+	},
+	"dependencies": {
+		"express": "^4.16.4",
+		"socket.io": "^2.2.0",
+		"socket.io-client": "^2.2.0"
 	}
 }

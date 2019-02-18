@@ -1,14 +1,8 @@
 import * as vscode from 'vscode';
+import { VSCodeDebugAPIServer } from './vscode-debug-api-server';
 
 export function activate(context: vscode.ExtensionContext) {
-	vscode.window.showInformationMessage('Hello World!');
-
-	const startDebugHandler = (event:vscode.DebugSession) => {
-		vscode.window.showInformationMessage(JSON.stringify(event));
-
-	}
-
-	vscode.debug.onDidStartDebugSession(startDebugHandler);
+	const vsCodeDebugAPIServer = new VSCodeDebugAPIServer();
 }
 
 export function deactivate() {}
