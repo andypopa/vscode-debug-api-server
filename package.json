@@ -3,6 +3,7 @@
 	"displayName": "vscode-debug-api-server",
 	"description": "Starts a server which you can use to start, stop, restart VSCode debugging sessions.",
 	"version": "0.0.1",
+	"publisher": "andypopa",
 	"engines": {
 		"vscode": "^1.31.0"
 	},
