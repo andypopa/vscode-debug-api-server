@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as io from 'socket.io-client';
 import AppServer from "./app/server";
 import DebugConfigurationsService from "./services/debug-configurations.service";
+import DebugService from './services/debug.service';
 
 export class VSCodeDebugAPIServer {
     debugSessionMapping:any = {};
@@ -16,17 +17,26 @@ export class VSCodeDebugAPIServer {
 
         const socket = io.connect('http://localhost:9696/');
 
+        socket.on('start', (debugConfigurationName: string) => {
+            DebugService.startSession(debugConfigurationName);
+        });
+
         socket.on('restart', (debugSessionId:string) => {
             let debugSession = this.debugSessionMapping[debugSessionId];
             if (typeof debugSession === 'undefined') {
                 console.log('not my debug session!', debugSessionId);
                 return;
             }
-            this.restartSession(debugSession);
+            DebugService.restartSession(debugSession);
         });
 
-        socket.on('start', (workspaceFolder: string, debugConfigurationName: string) => {
-            this.startSession(workspaceFolder, debugConfigurationName);
+        socket.on('stop', (debugSessionId: string) => {
+            let debugSession = this.debugSessionMapping[debugSessionId];
+            if (typeof debugSession === 'undefined') {
+                console.log('not my debug session!', debugSessionId);
+                return;
+            }
+            DebugService.stopSession(debugSession);
         });
 
         socket.on('add-debug-configuration', (workspaceFolder: string, debugConfiguration: any) => {

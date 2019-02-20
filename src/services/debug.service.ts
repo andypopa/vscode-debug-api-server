@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import DebugConfigurationsService from './debug-configurations.service';
 
 export default class DebugService {
-    public static startSession(workspaceFolder: string, debugConfigurationName: string): void {
+    public static startSession(debugConfigurationName: string): void {
         let debugConfigurations = DebugConfigurationsService.getDebugConfigurations();
         let maybeDebugConfigurationToStartIndex = debugConfigurations.findIndex((debugConfiguration: any) => debugConfiguration.name === debugConfigurationName);
 
@@ -19,6 +19,13 @@ export default class DebugService {
         console.log('restarting', debugSession);
         return debugSession.customRequest('terminate').then((result) => {
             return vscode.debug.startDebugging(undefined, debugSession.configuration);
+        });
+    }
+
+    public static stopSession(debugSession: vscode.DebugSession): Thenable<boolean> {
+        console.log('stopping', debugSession);
+        return debugSession.customRequest('terminate').then((result) => {
+            return result;
         });
     }
 }

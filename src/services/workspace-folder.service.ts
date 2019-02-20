@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-export default class WorkspaceFolderService {
+export class WorkspaceFolderService {
     public static getPotentialLaunchJsonPathForWorkspace(workspaceFolder: string) {
         return path.join(workspaceFolder, '.vscode', 'launch.json');
     }
@@ -21,12 +21,12 @@ export default class WorkspaceFolderService {
     }
 
     public static isValidWorkspaceFolderWithLaunchJson(workspaceFolder: string) {
-        if (!this.isOpenWorkspaceFolder(workspaceFolder)) {
+        if (!WorkspaceFolderService.isOpenWorkspaceFolder(workspaceFolder)) {
             return;
         }
 
-        let potentialLaunchJsonPathForWorkspace = this.getPotentialLaunchJsonPathForWorkspace(workspaceFolder);
-        if (!this.isValidLaunchJson(potentialLaunchJsonPathForWorkspace)) {
+        let potentialLaunchJsonPathForWorkspace = WorkspaceFolderService.getPotentialLaunchJsonPathForWorkspace(workspaceFolder);
+        if (!WorkspaceFolderService.isValidLaunchJson(potentialLaunchJsonPathForWorkspace)) {
             return false;
         }
         return true;
@@ -36,7 +36,7 @@ export default class WorkspaceFolderService {
         let isValid = true;
 
         try {
-            this.getDebugConfigurationsFromLaunchJsonInternal(launchJsonPath);
+            WorkspaceFolderService.getDebugConfigurationsFromLaunchJsonInternal(launchJsonPath);
         } catch (err) {
             console.error(err);
             isValid = false;
@@ -58,7 +58,7 @@ export default class WorkspaceFolderService {
 
     public static getDebugConfigurationsFromLaunchJson(launchJsonPath: fs.PathLike) {
         try {
-            return this.getDebugConfigurationsFromLaunchJsonInternal(launchJsonPath) as vscode.DebugConfiguration[];
+            return WorkspaceFolderService.getDebugConfigurationsFromLaunchJsonInternal(launchJsonPath) as vscode.DebugConfiguration[];
         } catch (err) {
             console.error(err);
             return [];

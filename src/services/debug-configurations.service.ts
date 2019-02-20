@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as _ from 'lodash';
-import WorkspaceFolderService from './workspace-folder.service';
+import { WorkspaceFolderService } from './workspace-folder.service';
 
 export default class DebugConfigurationsService {
     public static getDebugConfigurations() {
@@ -47,7 +47,7 @@ export default class DebugConfigurationsService {
             return;
         }
 
-        this.upsertDebugConfigurationInternal(workspaceFolder, debugConfiguration);
+        DebugConfigurationsService.upsertDebugConfigurationInternal(workspaceFolder, debugConfiguration);
     }
 
     public static removeDebugConfiguration(workspaceFolder: string, debugConfigurationName: string) {
@@ -55,6 +55,6 @@ export default class DebugConfigurationsService {
             return;
         }
 
-        this.removeDebugConfigurationInternal(workspaceFolder, debugConfigurationName);
+        DebugConfigurationsService.removeDebugConfigurationInternal(workspaceFolder, debugConfigurationName);
     }
 }
