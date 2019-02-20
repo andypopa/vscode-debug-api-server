@@ -6,13 +6,6 @@ import DebugConfigurationsService from "./services/debug-configurations.service"
 export class VSCodeDebugAPIServer {
     debugSessionMapping:any = {};
 
-    restartSession(debugSession: vscode.DebugSession): Thenable<boolean> {
-        console.log('restarting', debugSession);
-        return debugSession.customRequest('terminate').then((result) => {
-            return vscode.debug.startDebugging(undefined, debugSession.configuration);
-        });
-    }
-
     constructor() {
         try {
             const appServer = new AppServer();
@@ -30,6 +23,10 @@ export class VSCodeDebugAPIServer {
                 return;
             }
             this.restartSession(debugSession);
+        });
+
+        socket.on('start', (workspaceFolder: string, debugConfigurationName: string) => {
+            this.startSession(workspaceFolder, debugConfigurationName);
         });
 
         socket.on('add-debug-configuration', (workspaceFolder: string, debugConfiguration: any) => {

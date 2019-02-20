@@ -58,7 +58,7 @@ export default class WorkspaceFolderService {
 
     public static getDebugConfigurationsFromLaunchJson(launchJsonPath: fs.PathLike) {
         try {
-            this.getDebugConfigurationsFromLaunchJsonInternal(launchJsonPath);
+            return this.getDebugConfigurationsFromLaunchJsonInternal(launchJsonPath) as vscode.DebugConfiguration[];
         } catch (err) {
             console.error(err);
             return [];

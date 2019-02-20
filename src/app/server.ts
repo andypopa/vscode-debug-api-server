@@ -30,8 +30,8 @@ export default class AppServer {
         this.io.emit('restart', debugSession._id);
     }
 
-    emitStartSession(debugConfigurationName: any) {
-        this.io.emit('start', debugConfigurationName);
+    emitStartSession(workspaceFolder: string, debugConfigurationName: string) {
+        this.io.emit('start', workspaceFolder, debugConfigurationName);
     }
 
     emitStopSession(debugSession: any) {
@@ -103,13 +103,16 @@ export default class AppServer {
             res.sendStatus(200);
         });
 
-        this.app.get('/start/:id', (req: any, res: any) => {
-            if (typeof req.params.id === 'undefined' || req.params.id === 'all') {
-                this.debugSessions.forEach(this.emitStartSession);
+        this.app.get('/start/:workspaceFolder/:debugConfigurationName', (req: any, res: any) => {
+            let { workspaceFolder, debugConfigurationName } = req.params;
+
+            if (typeof workspaceFolder === 'undefined' ||
+                typeof debugConfigurationName === 'undefined') {
+                res.sendStatus(500);
             } else {
-                let debugSession = this.debugSessions.filter((debugSession) => debugSession._id === req.params.id);
-                this.emitStartSession(debugSession);
+                this.emitStartSession(workspaceFolder, debugConfigurationName);
             }
+
             res.sendStatus(200);
         });
 

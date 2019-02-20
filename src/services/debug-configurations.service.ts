@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
+import * as _ from 'lodash';
 import WorkspaceFolderService from './workspace-folder.service';
 
 export default class DebugConfigurationsService {
@@ -8,11 +9,11 @@ export default class DebugConfigurationsService {
         if (typeof workspaceFoldersArr === 'undefined') {
             return [];
         } else {
-            let debugConfigurations = workspaceFoldersArr
+            let debugConfigurations = _.flatten(workspaceFoldersArr
                 .map((wsf) => wsf.uri.fsPath)
                 .map(WorkspaceFolderService.getPotentialLaunchJsonPathForWorkspace)
                 .filter(fs.existsSync)
-                .map(WorkspaceFolderService.getDebugConfigurationsFromLaunchJson);
+                .map(WorkspaceFolderService.getDebugConfigurationsFromLaunchJson));
             console.log(debugConfigurations);
             return debugConfigurations;
         }
