@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as io from 'socket.io-client';
 import AppServer from "./app/server";
+import DebugConfigurationsService from "./services/debug-configurations.service";
 
 export class VSCodeDebugAPIServer {
     debugSessionMapping:any = {};
@@ -29,6 +30,18 @@ export class VSCodeDebugAPIServer {
                 return;
             }
             this.restartSession(debugSession);
+        });
+
+        socket.on('add-debug-configuration', (workspaceFolder: string, debugConfiguration: any) => {
+            DebugConfigurationsService.addDebugConfiguration(workspaceFolder, debugConfiguration);
+        });
+
+        socket.on('remove-debug-configuration', (workspaceFolder: string, debugConfigurationName: string) => {
+            DebugConfigurationsService.removeDebugConfiguration(workspaceFolder, debugConfigurationName);
+        });
+
+        socket.on('request-debug-configurations', () => {
+            socket.emit('emit-debug-configurations', DebugConfigurationsService.getDebugConfigurations());
         });
 
         vscode.debug.onDidStartDebugSession((debugSession: vscode.DebugSession) => {
