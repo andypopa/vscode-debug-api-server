@@ -26,12 +26,12 @@ export default class AppServer {
         this.io.emit('remove-debug-configuration', workspaceFolder, debugConfigurationName);
     }
 
-    emitRestartSession(debugSession: any) {
-        this.io.emit('restart', debugSession._id);
+    emitStartSession(debugConfigurationName: string) {
+        this.io.emit('start', debugConfigurationName);
     }
 
-    emitStartSession(debugConfigurationName: any) {
-        this.io.emit('start', debugConfigurationName);
+    emitRestartSession(debugSession: any) {
+        this.io.emit('restart', debugSession._id);
     }
 
     emitStopSession(debugSession: any) {
@@ -49,16 +49,12 @@ export default class AppServer {
         });
 
         this.app.use((err: any, req: any, res: any, next: Function) => {
-            console.error(err.stack)
-            res.status(500).send('Something broke!')
-        })
+            console.error(err.stack);
+            res.status(500).send('Something broke!');
+        });
 
         this.app.get('/', (req: any, res: any) => {
             res.send(JSON.stringify(this.debugSessions));
-        });
-
-        this.app.get('/d', (req: any, res: any) => {
-            res.sendStatus(200);
         });
 
         this.app.get('/debug-configurations', (req: any, res: any) => {
@@ -93,31 +89,35 @@ export default class AppServer {
             res.sendStatus(200);
         });
 
-        this.app.get('/restart/:id', (req: any, res: any) => {
-            if (typeof req.params.id === 'undefined' || req.params.id === 'all') {
-                this.debugSessions.forEach(this.emitRestartSession);
+        this.app.get('/restart/:debugSessionId', (req: any, res: any) => {
+            let { debugSessionId } = req.params;
+            if (typeof debugSessionId === 'undefined' || debugSessionId === 'all') {
+                this.debugSessions.forEach(this.emitRestartSession.bind(this));
             } else {
-                let debugSession = this.debugSessions.filter((debugSession) => debugSession._id === req.params.id);
+                let debugSession = this.debugSessions.filter((debugSession) => debugSession._id === debugSessionId)[0];
                 this.emitRestartSession(debugSession);
             }
             res.sendStatus(200);
         });
 
-        this.app.get('/start/:id', (req: any, res: any) => {
-            if (typeof req.params.id === 'undefined' || req.params.id === 'all') {
-                this.debugSessions.forEach(this.emitStartSession);
+        this.app.get('/start/:debugConfigurationName', (req: any, res: any) => {
+            let { debugConfigurationName } = req.params;
+
+            if (typeof debugConfigurationName === 'undefined') {
+                res.sendStatus(500);
             } else {
-                let debugSession = this.debugSessions.filter((debugSession) => debugSession._id === req.params.id);
-                this.emitStartSession(debugSession);
+                this.emitStartSession(debugConfigurationName);
             }
+
             res.sendStatus(200);
         });
 
-        this.app.get('/stop/:id', (req: any, res: any) => {
-            if (typeof req.params.id === 'undefined' || req.params.id === 'all') {
-                this.debugSessions.forEach(this.emitStopSession);
+        this.app.get('/stop/:debugSessionId', (req: any, res: any) => {
+            let { debugSessionId } = req.params;
+            if (typeof debugSessionId === 'undefined' || debugSessionId === 'all') {
+                this.debugSessions.forEach(this.emitStopSession.bind(this));
             } else {
-                let debugSession = this.debugSessions.filter((debugSession) => debugSession._id === req.params.id);
+                let debugSession = this.debugSessions.filter((debugSession) => debugSession._id === debugSessionId)[0];
                 this.emitStopSession(debugSession);
             }
             res.sendStatus(200);
