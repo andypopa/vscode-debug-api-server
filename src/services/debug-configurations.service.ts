@@ -64,8 +64,14 @@ export default class DebugConfigurationsService {
     }
 
     public static getLaunchJsonDataInternal(launchJsonPath: fs.PathLike) {
-        let launchJsonData = JSON.parse(fs.readFileSync(launchJsonPath, 'utf8').replace(/\/\/(.*)/g, ''));
-        return launchJsonData;
+        try {
+            let launchJsonData = JSON.parse(fs.readFileSync(launchJsonPath, 'utf8').replace(/\/\/(.*)/g, ''));
+            return launchJsonData;
+        } catch (err) {
+            const message = `Couldn't parse ./vscode/launch.json: ${err}`;
+            vscode.window.showErrorMessage(message)
+            throw Error(message);
+        }
     }
 
     public static isOpenWorkspaceFolder(workspaceFolder: string) {
@@ -108,7 +114,9 @@ export default class DebugConfigurationsService {
             typeof launchJsonData.configurations !== 'undefined') {
             return launchJsonData.configurations;
         } else {
-            throw Error(`Invalid launch.json: ${launchJsonPath}`);
+            const message = `Invalid launch.json: ${launchJsonPath}`;
+            vscode.window.showErrorMessage(message)
+            throw Error(message);
         }
     }
 
